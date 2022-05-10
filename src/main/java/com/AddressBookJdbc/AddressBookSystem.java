@@ -15,7 +15,7 @@ public class AddressBookSystem {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             System.out.println("Drivers loaded!!");
-            connection = DriverManager.getConnection(URL_JD,USER_NAME,PASSWORD);
+            connection = DriverManager.getConnection(URL_JD, USER_NAME, PASSWORD);
             System.out.println("connection Established!!");
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
@@ -54,4 +54,19 @@ public class AddressBookSystem {
         return addressBookList;
 
     }
+
+    public void updateCityByZip(String address, String city, String state, int zip, int srNo) {
+        try (Connection connection = getConnection()) {
+            Statement statement = connection.createStatement();
+            String query = "Update addressBook set address=" + "'" + address + "'" + ", " + "city=" + "'" + city + "'" + ", " + "state=" + "'" + state + "'" + ", " + "zip=" + zip + " where srNo=" + srNo + ";";
+            int result = statement.executeUpdate(query);
+            System.out.println(result);
+            if (result > 0) {
+                System.out.println("Address Updated Successfully");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

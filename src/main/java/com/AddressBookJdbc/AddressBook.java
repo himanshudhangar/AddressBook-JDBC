@@ -29,4 +29,10 @@ public class AddressBook {
             System.out.println(employee + "\n");
         }
     }
+
+    private static void updateCity() {
+        AddressBookRepo addressBookRepo = new AddressBookRepo();
+        System.out.println("Enter the address,city,state, zip and Serial Number  to Update");
+        addressBookRepo.updateCityByZip(scanner.next(), scanner.next(), scanner.next(), scanner.nextInt(), scanner.nextInt());
+    }
 }
