@@ -8,7 +8,7 @@ import java.util.List;
 public class AddressBookSystem {
     Connection connection;
 
-    private Connection getConnection() {
+    private static Connection getConnection() {
         String URL_JD = "jdbc:mysql://localhost:3306/payroll_service";
         String USER_NAME = "root";
         String PASSWORD = "Deepak@7";
@@ -24,17 +24,44 @@ public class AddressBookSystem {
         return connection;
     }
 
+    public static void insertData(Contacts add) throws SQLException {
+        Connection connection = getConnection();
+        try {
+            if (connection != null) {
+                connection.setAutoCommit(false);
+                Statement statement = connection.createStatement();
+                String sql = "insert into addressBook(firstname,lastname,address,city,state,zip,phoneNumber,email,bookName,contactType,date_added)" +
+                        "values('" + add.getFirstName() + "','" + add.getLastName() + "','" + add.getAddress() + "','" + add.getCity() +
+                        "','" + add.getState() + "','" + add.getZip() + "','" + add.getPhoneNumber() + "','" +
+                        add.getEmailId() + "','" + add.getBookName() + "','" + add.getContactType() + "','" + add.getDateAdded() + "');";
+                int result = statement.executeUpdate(sql);
+                connection.commit();
+                if (result > 0) {
+                    System.out.println("Contact Inserted");
+                }
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException sqlException) {
+            System.out.println("Insertion Rollbacked");
+            connection.rollback();
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
 
-    public List<Contact> retrieveData() {
+
+    public List<Contacts> retrieveData() {
         ResultSet resultSet = null;
-        List<Contact> addressBookList = new ArrayList<Contact>();
+        List<Contacts> addressBookList = new ArrayList<Contacts>();
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
             String sql = "select * from AddressBook";
             resultSet = statement.executeQuery(sql);
             int count = 0;
             while (resultSet.next()) {
-                Contact contactInfo = new Contact();
+                Contacts contactInfo = new Contacts();
                 contactInfo.setFirstName(resultSet.getString("firstName"));
                 contactInfo.setLastName(resultSet.getString("Lastname"));
                 contactInfo.setAddress(resultSet.getString("address"));
@@ -70,16 +97,16 @@ public class AddressBookSystem {
         }
     }
 
-    public List<Contact> findAllForParticularDate(LocalDate date) {
+    public List<Contacts> findAllForParticularDate(LocalDate date) {
         ResultSet resultSet = null;
-        List<Contact> addressBookList = new ArrayList<Contact>();
+        List<Contacts> addressBookList = new ArrayList<Contacts>();
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
             String sql = "select * from AddressBook where date_added between cast(' " + date + "'" + " as date)  and date(now());";
             resultSet = statement.executeQuery(sql);
             int count = 0;
             while (resultSet.next()) {
-                Contact contactInfo = new Contact();
+                Contacts contactInfo = new Contacts();
                 contactInfo.setFirstName(resultSet.getString("firstName"));
                 contactInfo.setLastName(resultSet.getString("Lastname"));
                 contactInfo.setAddress(resultSet.getString("address"));
